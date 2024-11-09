@@ -2,6 +2,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import styles from './home.styles';
 import { MaterialIcons } from '@expo/vector-icons';
+import WifiSelectorModal from './components/wifiSelectorModal/wifiSelectorModal';
 
 export default function home() {
   return (
@@ -39,6 +40,17 @@ export default function home() {
       <TouchableOpacity style={styles.addBtn}>
         <Text style={styles.addBtnText}>LEMBRAR</Text>
       </TouchableOpacity>
+      <WifiSelectorModal
+        isVisible={true}
+        onClose={() => {}}
+        title="Essa é a rede Wi-Fi que você usa em casa?"
+        modalTitleWifi="Ronaldo 5G"
+        message="O app avisa quando você sai de casa, lembrando dos itens essenciais cadastrados, ao desconectar do Wi-Fi."
+        primaryButtonText="ESSE MESMO"
+        onPrimaryButtonPress={() => console.log('Lembrar pressionado')}
+        secondaryButtonText="Cancelar"
+        onSecondaryButtonPress={() => {}}
+      />
     </View>
   );
 }

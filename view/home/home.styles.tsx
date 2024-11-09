@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import colors from '../../constants/colors';
 
 export default StyleSheet.create({
   background: {
@@ -29,7 +30,7 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
-    color: '#FF725EC7',
+    color: colors.textPrimary,
   },
   itemsList: {
     flex: 1,
@@ -38,11 +39,11 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   item: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background,
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    shadowColor: '#000',
+    shadowColor: colors.shadowColor,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -51,7 +52,7 @@ export default StyleSheet.create({
     marginBottom: 20,
   },
   itemText: {
-    color: '#4A4A4A',
+    color: colors.secondary,
     fontSize: 20,
     fontWeight: '500',
     width: '100%',
@@ -61,14 +62,14 @@ export default StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 50,
-    backgroundColor: '#FF725E',
+    backgroundColor: colors.primaryButton,
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 30,
     alignItems: 'center',
   },
   addBtnText: {
-    color: '#FFFFFF',
+    color: colors.background,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -76,13 +77,13 @@ export default StyleSheet.create({
     position: 'absolute',
     left: 20,
     top: 50,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background,
     borderRadius: 50,
     width: 70,
     height: 70,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.shadowColor,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,

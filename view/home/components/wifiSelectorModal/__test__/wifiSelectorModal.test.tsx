@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import WifiSelectorModal from '../wifiSelectorModal'; // Seu componente wifiSelectorModal
+import WifiSelectorModal from '../wifiSelectorModal';
 import { describe, it, expect } from '@jest/globals';
 
 describe('<WifiSelectorModal />', () => {

@@ -2,7 +2,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import styles from './home.styles';
 import { MaterialIcons } from '@expo/vector-icons';
-import WifiSelectorModal from './components/wifiSelectorModal/wifiSelectorModal';
+import AddItemModal from './components/addItemModal/addItemModal';
 
 export default function home() {
   return (
@@ -14,7 +14,7 @@ export default function home() {
       />
       <View style={styles.wifiSelectorBtn}>
         <MaterialIcons
-          testID="material-icon"
+          testID="home-icon"
           name="home"
           size={30}
           color="#FF725E"
@@ -22,6 +22,7 @@ export default function home() {
       </View>
       <View style={styles.containerImage}>
         <Image
+          testID="image-center"
           style={styles.imageCenter}
           source={require('../../assets/images/girl.png')}
         />
@@ -38,15 +39,26 @@ export default function home() {
         </View>
       </View>
       <TouchableOpacity style={styles.addBtn}>
-        <Text style={styles.addBtnText}>LEMBRAR</Text>
+        <Text style={styles.addBtnText} testID="reminder-button">
+          LEMBRAR
+        </Text>
       </TouchableOpacity>
-      <WifiSelectorModal
+      {/* <WifiSelectorModal
         isVisible={true}
         onClose={() => {}}
         title="Essa é a rede Wi-Fi que você usa em casa?"
         modalTitleWifi="Ronaldo 5G"
         message="O app avisa quando você sai de casa, lembrando dos itens essenciais cadastrados, ao desconectar do Wi-Fi."
         primaryButtonText="ESSE MESMO"
+        onPrimaryButtonPress={() => console.log('Lembrar pressionado')}
+        secondaryButtonText="Cancelar"
+        onSecondaryButtonPress={() => {}}
+      /> */}
+      <AddItemModal
+        isVisible={true}
+        onClose={() => {}}
+        title="O que você precisa levar com você?"
+        primaryButtonText="LEMBRAR"
         onPrimaryButtonPress={() => console.log('Lembrar pressionado')}
         secondaryButtonText="Cancelar"
         onSecondaryButtonPress={() => {}}

@@ -1,10 +1,40 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import { Image, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './home.styles';
 import { MaterialIcons } from '@expo/vector-icons';
 import AddItemModal from './components/addItemModal/addItemModal';
+import WifiSelectorModal from './components/wifiSelectorModal/wifiSelectorModal';
+
+interface Item {
+  id: number;
+  name: string;
+}
 
 export default function home() {
+  const [isWifiSelectorModalVisible, setWifiSelectorModalVisible] =
+    useState(false);
+  const [isAddItemModalVisible, setAddItemModalVisible] = useState(false);
+  const [listItens, setListItens] = useState<Item[]>([]);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const addNewItem = (newItemName: string) => {
+    if (newItemName.trim()) {
+      const newItem: Item = {
+        id: listItens.length + 1,
+        name: newItemName,
+      };
+      setListItens((prevItems) => [...prevItems, newItem]);
+      setAddItemModalVisible(false); // Fecha o modal
+    }
+  };
+
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      // Quando o modal for aberto ou quando o item for adicionado, rola para o final
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    }
+  }, [listItens]);
+
   return (
     <View style={styles.container}>
       <Image
@@ -12,14 +42,17 @@ export default function home() {
         style={styles.background}
         source={require('../../assets/images/background.png')}
       />
-      <View style={styles.wifiSelectorBtn}>
+      <TouchableOpacity
+        onPress={() => setWifiSelectorModalVisible(true)}
+        style={styles.wifiSelectorBtn}
+      >
         <MaterialIcons
           testID="home-icon"
           name="home"
           size={30}
           color="#FF725E"
         />
-      </View>
+      </TouchableOpacity>
       <View style={styles.containerImage}>
         <Image
           testID="image-center"
@@ -29,39 +62,45 @@ export default function home() {
       </View>
       <View style={styles.containerList}>
         <Text style={styles.title}>Tudo pronto para sair?</Text>
-        <View style={styles.itemsList}>
-          <View style={styles.item}>
-            <Text style={styles.itemText}>Carteira</Text>
-          </View>
-          <View style={styles.item}>
-            <Text style={styles.itemText}>Cartão de memória</Text>
-          </View>
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.itemsList}
+          ref={scrollViewRef}
+          showsVerticalScrollIndicator={false}
+        >
+          {listItens.map((item) => (
+            <View key={item.id} style={styles.item}>
+              <Text style={styles.itemText}>{item.name}</Text>
+            </View>
+          ))}
+        </ScrollView>
       </View>
-      <TouchableOpacity style={styles.addBtn}>
+      <TouchableOpacity
+        style={styles.addBtn}
+        onPress={() => setAddItemModalVisible(true)}
+      >
         <Text style={styles.addBtnText} testID="reminder-button">
           LEMBRAR
         </Text>
       </TouchableOpacity>
-      {/* <WifiSelectorModal
-        isVisible={true}
-        onClose={() => {}}
+      <WifiSelectorModal
+        isVisible={isWifiSelectorModalVisible}
+        onClose={() => setWifiSelectorModalVisible(false)}
         title="Essa é a rede Wi-Fi que você usa em casa?"
         modalTitleWifi="Ronaldo 5G"
         message="O app avisa quando você sai de casa, lembrando dos itens essenciais cadastrados, ao desconectar do Wi-Fi."
         primaryButtonText="ESSE MESMO"
         onPrimaryButtonPress={() => console.log('Lembrar pressionado')}
         secondaryButtonText="Cancelar"
-        onSecondaryButtonPress={() => {}}
-      /> */}
+        onSecondaryButtonPress={() => setWifiSelectorModalVisible(false)}
+      />
       <AddItemModal
-        isVisible={true}
-        onClose={() => {}}
+        isVisible={isAddItemModalVisible}
+        onClose={() => setAddItemModalVisible(false)}
         title="O que você precisa levar com você?"
         primaryButtonText="LEMBRAR"
-        onPrimaryButtonPress={() => console.log('Lembrar pressionado')}
+        onPrimaryButtonPress={(item) => addNewItem(item)}
         secondaryButtonText="Cancelar"
-        onSecondaryButtonPress={() => {}}
+        onSecondaryButtonPress={() => setAddItemModalVisible(false)}
       />
     </View>
   );

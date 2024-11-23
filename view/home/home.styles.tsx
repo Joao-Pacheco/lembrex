@@ -33,8 +33,8 @@ export default StyleSheet.create({
     color: colors.textPrimary,
   },
   itemsList: {
-    flex: 1,
-    marginTop: 20,
+    paddingBottom: 100,
+    paddingTop: 10,
     width: '100%',
     alignItems: 'center',
   },

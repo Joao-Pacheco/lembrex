@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
+  TextInput,
+  Pressable,
+  Platform,
+} from 'react-native';
 import styles from './addItemModal.styles';
+import { handlePress } from '../../../../helpers/commons/handlePress';
 
 interface ModalProps {
   isVisible: boolean;
   onClose: () => void;
   title: string;
   primaryButtonText: string;
-  onPrimaryButtonPress: () => void;
+  onPrimaryButtonPress: (item: string) => void;
   secondaryButtonText?: string;
   onSecondaryButtonPress?: () => void;
 }
@@ -23,21 +32,35 @@ export default function addItemModal(modalProps: ModalProps) {
     onSecondaryButtonPress,
   } = modalProps;
 
-  const [text, setText] = useState('');
+  const [item, setItem] = useState('');
+
+  useEffect(() => {
+    setItem('');
+  }, [isVisible]);
 
   return (
-    <Modal animationType="slide" transparent={true} visible={isVisible}>
-      <TouchableOpacity
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={isVisible}
+      onRequestClose={onClose}
+    >
+      <Pressable
         testID="modal-background"
         style={styles.modalBackground}
         onPress={onClose}
       >
-        <View testID="modal-view" style={styles.modalView}>
+        <View
+          testID="modal-view"
+          style={styles.modalView}
+          onStartShouldSetResponder={(e) => true}
+          {...(Platform.OS === 'web' ? { onMouseDown: handlePress } : {})}
+        >
           <Text style={styles.modalTitle}>{title}</Text>
           <TextInput
-            value={text}
+            value={item}
             style={styles.addItemInput}
-            onChangeText={setText}
+            onChangeText={setItem}
             placeholder="Ex: Carteira"
             placeholderTextColor="#888"
           />
@@ -54,13 +77,13 @@ export default function addItemModal(modalProps: ModalProps) {
             )}
             <TouchableOpacity
               style={[styles.button, styles.primaryButton]}
-              onPress={onPrimaryButtonPress}
+              onPress={() => onPrimaryButtonPress(item)}
             >
               <Text style={styles.primaryButtonText}>{primaryButtonText}</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </Modal>
   );
 }

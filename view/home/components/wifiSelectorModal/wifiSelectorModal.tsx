@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
+  Pressable,
+  Platform,
+} from 'react-native';
 import styles from './wifiSelectorModal.styles';
+import { handlePress } from '../../../../helpers/commons/handlePress';
 
 interface ModalProps {
   isVisible: boolean;
@@ -34,12 +42,17 @@ export default function wifiSelectorModal(modalProps: ModalProps) {
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <TouchableOpacity
+      <Pressable
         testID="modal-background"
         style={styles.modalBackground}
         onPress={onClose}
       >
-        <View testID="modal-view" style={styles.modalView}>
+        <View
+          testID="modal-view"
+          style={styles.modalView}
+          onStartShouldSetResponder={(e) => true}
+          {...(Platform.OS === 'web' ? { onMouseDown: handlePress } : {})}
+        >
           <Text style={styles.modalTitle}>{title}</Text>
           <Text style={styles.modalTitleWifi}>{modalTitleWifi}</Text>
           <Text style={styles.modalMessage}>{message}</Text>
@@ -62,7 +75,7 @@ export default function wifiSelectorModal(modalProps: ModalProps) {
             </TouchableOpacity>
           </View>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </Modal>
   );
 }

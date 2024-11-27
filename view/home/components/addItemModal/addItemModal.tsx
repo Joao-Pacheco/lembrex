@@ -76,6 +76,7 @@ export default function addItemModal(modalProps: ModalProps) {
               </TouchableOpacity>
             )}
             <TouchableOpacity
+              testID="add-item-button"
               style={[styles.button, styles.primaryButton]}
               onPress={() => onPrimaryButtonPress(item)}
             >

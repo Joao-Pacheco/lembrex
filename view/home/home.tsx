@@ -4,6 +4,7 @@ import styles from './home.styles';
 import { MaterialIcons } from '@expo/vector-icons';
 import AddItemModal from './components/addItemModal/addItemModal';
 import WifiSelectorModal from './components/wifiSelectorModal/wifiSelectorModal';
+import useListStore from '../../view_model/listStore';
 
 interface Item {
   id: number;
@@ -14,26 +15,25 @@ export default function home() {
   const [isWifiSelectorModalVisible, setWifiSelectorModalVisible] =
     useState(false);
   const [isAddItemModalVisible, setAddItemModalVisible] = useState(false);
-  const [listItens, setListItens] = useState<Item[]>([]);
   const scrollViewRef = useRef<ScrollView>(null);
+  const { list, addItem } = useListStore();
 
   const addNewItem = (newItemName: string) => {
     if (newItemName.trim()) {
       const newItem: Item = {
-        id: listItens.length + 1,
+        id: list.length + 1,
         name: newItemName,
       };
-      setListItens((prevItems) => [...prevItems, newItem]);
-      setAddItemModalVisible(false); // Fecha o modal
+      addItem(newItem);
+      setAddItemModalVisible(false);
     }
   };
 
   useEffect(() => {
     if (scrollViewRef.current) {
-      // Quando o modal for aberto ou quando o item for adicionado, rola para o final
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
-  }, [listItens]);
+  }, [list]);
 
   return (
     <View style={styles.container}>
@@ -67,7 +67,7 @@ export default function home() {
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
         >
-          {listItens.map((item) => (
+          {list.map((item: Item) => (
             <View key={item.id} style={styles.item}>
               <Text style={styles.itemText}>{item.name}</Text>
             </View>

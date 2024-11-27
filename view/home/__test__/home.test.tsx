@@ -18,11 +18,6 @@ describe('Home', () => {
     const titleText = getByText('Tudo pronto para sair?');
     expect(titleText).toBeTruthy();
 
-    const item1Text = getByText('Carteira');
-    const item2Text = getByText('Cartão de memória');
-    expect(item1Text).toBeTruthy();
-    expect(item2Text).toBeTruthy();
-
     const remindButton = getByTestId('reminder-button');
     expect(remindButton).toBeTruthy();
   });
@@ -34,5 +29,48 @@ describe('Home', () => {
     expect(remindButton).toBeTruthy();
 
     fireEvent.press(remindButton);
+  });
+
+  it('should add items to the list correctly', () => {
+    const { getByText, getByTestId, getByPlaceholderText } = render(<Home />);
+
+    // Abrir o modal de adicionar item
+    const lembrarButton = getByTestId('reminder-button');
+    fireEvent.press(lembrarButton);
+
+    // Verificar se o modal está visível
+    const addItemModalTitle = getByText('O que você precisa levar com você?');
+    expect(addItemModalTitle).toBeTruthy();
+
+    // Adicionar um item
+    const inputField = getByPlaceholderText('Ex: Carteira');
+    fireEvent.changeText(inputField, 'Carteira');
+    const addItemButton = getByTestId('add-item-button');
+    fireEvent.press(addItemButton);
+
+    // Verificar se o item foi adicionado à lista
+    const addedItem = getByText('Carteira');
+    expect(addedItem).toBeTruthy();
+  });
+
+  it('should display and hide the Wi-Fi modal correctly', () => {
+    const { getByTestId, getByText, queryByText } = render(<Home />);
+
+    // Abrir o modal de Wi-Fi
+    const wifiButton = getByTestId('home-icon');
+    fireEvent.press(wifiButton);
+
+    // Verificar se o modal de Wi-Fi está visível
+    const wifiModalTitle = getByText(
+      'Essa é a rede Wi-Fi que você usa em casa?',
+    );
+    expect(wifiModalTitle).toBeTruthy();
+
+    // Fechar o modal de Wi-Fi
+    const cancelButton = getByText('Cancelar');
+    fireEvent.press(cancelButton);
+
+    // Verificar se o modal foi fechado
+    expect(queryByText('Essa é a rede Wi-Fi que você usa em casa?')).toBeNull();
   });
 });

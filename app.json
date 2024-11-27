@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
+    "backgroundColor": "#ffffff",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -14,7 +15,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.lembrex",
-      "newArchEnabled": true
+      "newArchEnabled": true,
+      "backgroundColor": "#ffffff"
     },
     "android": {
       "adaptiveIcon": {

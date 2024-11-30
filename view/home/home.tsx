@@ -1,22 +1,23 @@
-import { Image, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
-import styles from './home.styles';
+import { Image, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import styles from './home.styles';
 import AddItemModal from './components/addItemModal/addItemModal';
 import WifiSelectorModal from './components/wifiSelectorModal/wifiSelectorModal';
 import useListStore from '../../view_model/listStore';
+import ListItem from './components/listItem/listItem';
 
 interface Item {
   id: number;
   name: string;
 }
 
-export default function home() {
+export default function Home() {
   const [isWifiSelectorModalVisible, setWifiSelectorModalVisible] =
     useState(false);
   const [isAddItemModalVisible, setAddItemModalVisible] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
-  const { list, addItem } = useListStore();
+  const { list, addItem, removeItem } = useListStore();
 
   const addNewItem = (newItemName: string) => {
     if (newItemName.trim()) {
@@ -67,13 +68,18 @@ export default function home() {
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
         >
-          {list.map((item: Item) => (
-            <View key={item.id} style={styles.item}>
-              <Text style={styles.itemText}>{item.name}</Text>
-            </View>
-          ))}
+          {list.length === 0 ? (
+            <Text style={styles.emptyListText}>
+              Clique em LEMBRAR, e adicione itens
+            </Text>
+          ) : (
+            list.map((item: Item) => (
+              <ListItem key={item.id} item={item} onRemove={removeItem} />
+            ))
+          )}
         </ScrollView>
       </View>
+
       <TouchableOpacity
         style={styles.addBtn}
         onPress={() => setAddItemModalVisible(true)}
@@ -82,6 +88,7 @@ export default function home() {
           LEMBRAR
         </Text>
       </TouchableOpacity>
+
       <WifiSelectorModal
         isVisible={isWifiSelectorModalVisible}
         onClose={() => setWifiSelectorModalVisible(false)}
@@ -93,6 +100,7 @@ export default function home() {
         secondaryButtonText="Cancelar"
         onSecondaryButtonPress={() => setWifiSelectorModalVisible(false)}
       />
+
       <AddItemModal
         isVisible={isAddItemModalVisible}
         onClose={() => setAddItemModalVisible(false)}

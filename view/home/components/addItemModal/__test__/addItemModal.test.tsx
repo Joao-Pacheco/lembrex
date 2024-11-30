@@ -23,11 +23,9 @@ describe('AddItemModal Component', () => {
       <AddItemModal {...defaultProps} />,
     );
 
-    // Verifica título e placeholder do input
     expect(getByText('O que você precisa levar com você?')).toBeTruthy();
     expect(getByPlaceholderText('Ex: Carteira')).toBeTruthy();
 
-    // Verifica os botões
     expect(getByText('Cancelar')).toBeTruthy();
     expect(getByText('ESSE MESMO')).toBeTruthy();
   });

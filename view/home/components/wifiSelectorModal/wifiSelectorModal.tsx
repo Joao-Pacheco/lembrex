@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import styles from './wifiSelectorModal.styles';
 import { handlePress } from '../../../../helpers/commons/handlePress';
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import * as Location from 'expo-location';
 
 interface ModalProps {
   isVisible: boolean;
@@ -27,13 +29,51 @@ export default function wifiSelectorModal(modalProps: ModalProps) {
     isVisible,
     onClose,
     title,
-    modalTitleWifi,
     message,
     primaryButtonText,
     onPrimaryButtonPress,
     secondaryButtonText,
     onSecondaryButtonPress,
   } = modalProps;
+
+  // Estado para armazenar o SSID
+  const [ssid, setSsid] = useState<string | null>(null);
+
+  // Extensão do tipo para incluir BSSID e SSID
+  type WifiDetails = {
+    bssid?: string;
+    ssid?: string;
+  } & NetInfoState['details'];
+
+  // Função para solicitar permissão de localização
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === 'granted') {
+      const location = await Location.getCurrentPositionAsync({});
+      console.log('location', location);
+    }
+  };
+
+  // Busca o SSID quando o modal estiver visível
+  useEffect(() => {
+    getLocation();
+
+    if (isVisible) {
+      NetInfo.configure({
+        shouldFetchWiFiSSID: true,
+      });
+
+      NetInfo.fetch().then((state) => {
+        const details = state.details as WifiDetails;
+        console.log('BSSID', details?.bssid);
+        console.log('SSID', details?.ssid);
+        console.log('details', details);
+
+        // Atualiza o estado com o SSID
+        setSsid(details?.ssid || 'SSID não disponível');
+      });
+    }
+  }, [isVisible]);
 
   return (
     <Modal
@@ -54,7 +94,10 @@ export default function wifiSelectorModal(modalProps: ModalProps) {
           {...(Platform.OS === 'web' ? { onMouseDown: handlePress } : {})}
         >
           <Text style={styles.modalTitle}>{title}</Text>
-          <Text style={styles.modalTitleWifi}>{modalTitleWifi}</Text>
+          <Text style={styles.modalTitleWifi}>
+            {/* Exibe o SSID no lugar de modalTitleWifi */}
+            {ssid || 'Carregando Wi-Fi...'}
+          </Text>
           <Text style={styles.modalMessage}>{message}</Text>
           <View style={styles.buttonContainer}>
             {secondaryButtonText && (

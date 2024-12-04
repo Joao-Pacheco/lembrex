@@ -8,6 +8,14 @@
     "userInterfaceStyle": "light",
     "backgroundColor": "#ffffff",
     "newArchEnabled": true,
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Permita o aplicativo acessar sua localização"
+        }
+      ]
+    ],
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -17,7 +25,13 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.lembrex",
       "newArchEnabled": true,
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "entitlements": {
+        "com.apple.developer.networking.wifi-info": true
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "O aplicativo precisa acessar sua localização para obter informações sobre o Wi-Fi."
+      }
     },
     "android": {
       "adaptiveIcon": {

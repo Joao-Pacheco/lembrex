@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import { Image, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import * as Location from 'expo-location';
@@ -18,7 +11,7 @@ import ListItem from './components/listItem/listItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useWifiStore from '../../view_model/useWifiStore';
 import Toast from 'react-native-toast-message';
-import PushNotification from 'react-native-push-notification';
+import * as Notifications from 'expo-notifications';
 
 interface Item {
   id: number;
@@ -32,7 +25,7 @@ export default function Home() {
   const scrollViewRef = useRef<ScrollView>(null);
   const { list, addItem, removeItem } = useListStore();
   const [ssid, setSsid] = useState<string | null>(null);
-  const { saveSsid, savedSsid } = useWifiStore();
+  const { savedSsid, saveSsid } = useWifiStore();
 
   const addNewItem = (newItemName: string) => {
     if (newItemName.trim()) {
@@ -59,7 +52,7 @@ export default function Home() {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === 'granted') {
       const location = await Location.getCurrentPositionAsync({});
-      console.log('location', location);
+      /* console.log('location', location); */
     }
   };
 
@@ -88,13 +81,19 @@ export default function Home() {
 
   // Listener para alterações na conexão
   const unsubscribe = NetInfo.addEventListener((state) => {
+    console.log('ssid', ssid);
+    console.log('savedSsid', savedSsid);
+    console.log('state.isConnected', state.isConnected);
+    console.log('state.type', state.type);
+
     if (ssid !== savedSsid) {
       if (state.isConnected && state.type === 'wifi') {
-        /* PushNotification.localNotification({
-          channelId: 'default-channel-id',
-          title: 'Olá, João!',
-          message: 'Esta é uma notificação local.',
-          bigText: 'Mensagem detalhada que aparece ao expandir a notificação.',
+        /* Notifications.scheduleNotificationAsync({
+          content: {
+            title: 'Lembrex',
+            body: 'Veja os itens que você deve levar com vocé',
+          },
+          trigger: null,
         }); */
       } else {
         // trocou de wifi para um outro wif

@@ -12,7 +12,15 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Permita o aplicativo acessar sua localização"
+          "locationAlwaysAndWhenInUsePermission": "Permita o aplicativo acessar sua localização"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#ffffff",
+          "defaultChannel": "default",
+          "enableBackgroundRemoteNotifications": false
         }
       ]
     ],

@@ -1,11 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Image, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import * as Location from 'expo-location';
 import styles from './home.styles';
 import AddItemModal from './components/addItemModal/addItemModal';
 import WifiSelectorModal from './components/wifiSelectorModal/wifiSelectorModal';
 import useListStore from '../../view_model/listStore';
 import ListItem from './components/listItem/listItem';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import useWifiStore from '../../view_model/useWifiStore';
+import Toast from 'react-native-toast-message';
+import PushNotification from 'react-native-push-notification';
 
 interface Item {
   id: number;
@@ -18,6 +31,8 @@ export default function Home() {
   const [isAddItemModalVisible, setAddItemModalVisible] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const { list, addItem, removeItem } = useListStore();
+  const [ssid, setSsid] = useState<string | null>(null);
+  const { saveSsid, savedSsid } = useWifiStore();
 
   const addNewItem = (newItemName: string) => {
     if (newItemName.trim()) {
@@ -35,6 +50,72 @@ export default function Home() {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
   }, [list]);
+
+  type WifiDetails = {
+    ssid?: string;
+  } & NetInfoState['details'];
+
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === 'granted') {
+      const location = await Location.getCurrentPositionAsync({});
+      console.log('location', location);
+    }
+  };
+
+  const showToast = (type: string, text1: string, text2: string) => {
+    Toast.show({
+      type: type,
+      text1: text1,
+      text2: text2,
+    });
+  };
+
+  const handleSaveSsid = async () => {
+    if (ssid) {
+      try {
+        await AsyncStorage.setItem('savedWifiSsid', ssid);
+        saveSsid(ssid);
+        showToast('success', 'Wifi salvo com sucesso', 'Wifi: ' + ssid);
+        setWifiSelectorModalVisible(false);
+      } catch (error) {
+        console.error('Erro ao salvar Wifi:', error);
+      }
+    } else {
+      showToast('error', 'Nenhum Wifi conectado', 'Wifi nulo');
+    }
+  };
+
+  // Listener para alterações na conexão
+  const unsubscribe = NetInfo.addEventListener((state) => {
+    if (ssid !== savedSsid) {
+      if (state.isConnected && state.type === 'wifi') {
+        /* PushNotification.localNotification({
+          channelId: 'default-channel-id',
+          title: 'Olá, João!',
+          message: 'Esta é uma notificação local.',
+          bigText: 'Mensagem detalhada que aparece ao expandir a notificação.',
+        }); */
+      } else {
+        // trocou de wifi para um outro wif
+      }
+    }
+  });
+
+  useEffect(() => {
+    getLocation();
+
+    NetInfo.configure({
+      shouldFetchWiFiSSID: true,
+    });
+
+    NetInfo.fetch().then((state) => {
+      const details = state.details as WifiDetails;
+      setSsid(details?.ssid || 'Wi-Fi não disponível');
+    });
+
+    unsubscribe();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -93,10 +174,10 @@ export default function Home() {
         isVisible={isWifiSelectorModalVisible}
         onClose={() => setWifiSelectorModalVisible(false)}
         title="Essa é a rede Wi-Fi que você usa em casa?"
-        modalTitleWifi="Ronaldo 5G"
         message="O app avisa quando você sai de casa, lembrando dos itens essenciais cadastrados, ao desconectar do Wi-Fi."
+        wifiTitle={ssid || 'Wi-Fi desconectado'}
         primaryButtonText="ESSE MESMO"
-        onPrimaryButtonPress={() => console.log('Lembrar pressionado')}
+        onPrimaryButtonPress={() => handleSaveSsid()}
         secondaryButtonText="Cancelar"
         onSecondaryButtonPress={() => setWifiSelectorModalVisible(false)}
       />
@@ -110,6 +191,7 @@ export default function Home() {
         secondaryButtonText="Cancelar"
         onSecondaryButtonPress={() => setAddItemModalVisible(false)}
       />
+      <Toast />
     </View>
   );
 }

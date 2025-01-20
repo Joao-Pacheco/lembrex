@@ -3891,6 +3891,11 @@ expo-modules-core@2.1.1, expo-modules-core@^2.1.1:
   dependencies:
     invariant "^2.2.4"
 
+expo-network@~7.0.4:
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/expo-network/-/expo-network-7.0.4.tgz#df8d06195bdd74c8246d025fc25907e0d55fe714"
+  integrity sha512-EDfuDIwlgAn7RucCYcLOOOM9noDTxRo9ATPFfDj3enwYezSDsXRzbV7LB6TsjXUtDDWgMPM8kQtwHSyavDc4zA==
+
 expo-notifications@~0.29.11:
   version "0.29.11"
   resolved "https://registry.yarnpkg.com/expo-notifications/-/expo-notifications-0.29.11.tgz#0691f88c91f6598671cec8e2ff12922ea1493edf"
